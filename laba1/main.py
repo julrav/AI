@@ -1,8 +1,10 @@
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from IPython.display import display
 
 # загружаем данные
-df = pd.read_csv("datasets/train.csv")
+df = pd.read_csv("test.csv")
 
 # смотрим на данные
 df.head()
@@ -105,6 +107,8 @@ if len(low_cardinality_cols) > 0:
     print("Столбцы после One-Hot Encoding:")
     new_columns = [col for col in df_final.columns if any(low_col in col for low_col in low_cardinality_cols)]
     print(new_columns)
+
+df_final.to_csv("processed_titanic.csv", index=False)
 
 print(f"\nРазмер данных до преобразования: {df_normalized.shape}")
 print(f"Размер данных после преобразования: {df_final.shape}")
