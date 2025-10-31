@@ -4,9 +4,9 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 from IPython.display import display
 
 # загружаем данные
-df = pd.read_csv("test.csv")
+df = pd.read_csv("datasets/train.csv")
 
-# смотрим на данные
+# смотрим
 df.head()
 
 # информация о данных
