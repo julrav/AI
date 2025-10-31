@@ -88,16 +88,6 @@ for col in categorical_columns:
         high_cardinality_cols.append(col)
 
 print(f"\nКолонки для One-Hot Encoding: {low_cardinality_cols}")
-print(f"Колонки для Label Encoding: {high_cardinality_cols}")
-
-# применяем Label Encoding для колонок с большим количеством категорий
-from sklearn.preprocessing import LabelEncoder
-
-label_encoder = LabelEncoder()
-
-for col in high_cardinality_cols:
-    print(f"Применяем Label Encoding к: {col}")
-    df_final[col] = label_encoder.fit_transform(df_final[col].astype(str))
 
 # применяем One-Hot Encoding для колонок с малым количеством категорий
 if len(low_cardinality_cols) > 0:
