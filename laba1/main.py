@@ -1,10 +1,9 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler, LabelEncoder
-from IPython.display import display
+from sklearn.preprocessing import MinMaxScaler
 
 # загружаем данные
-df = pd.read_csv("datasets/train.csv")
+df = pd.read_csv("datasets/test.csv")
 
 # смотрим
 df.head()
@@ -23,8 +22,8 @@ print("Пропущенные значения:")
 missing_values = df.isnull().sum()
 print(missing_values[missing_values > 0])
 
-# сохраняем копию для сравнения
-df_filled = df.copy()
+# сохраняем копию для сравнения, исключая колонки
+df_filled = df.drop(['Name', 'Cabin', 'PassengerId', 'Spa'], axis=1).copy()
 
 # заполняем числовые колонки медианой
 numeric_columns = df_filled.select_dtypes(include=[np.number]).columns
@@ -32,7 +31,7 @@ for col in numeric_columns:
     if df_filled[col].isnull().sum() > 0:
         df_filled[col] = df_filled[col].fillna(df_filled[col].median())
 
-    # заполняем категориальные колонки модой
+# заполняем категориальные колонки модой
 categorical_columns = df_filled.select_dtypes(include=['object']).columns
 for col in categorical_columns:
     if df_filled[col].isnull().sum() > 0:
@@ -48,21 +47,19 @@ print(df.isnull().sum().sum())
 print("После заполнения:")
 print(df_filled.isnull().sum().sum())
 
-# нормализуем числовые колонки
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-scaler = StandardScaler()
+scaler = MinMaxScaler()
 numeric_columns = df_filled.select_dtypes(include=[np.number]).columns
 
 # создаем копию для нормализованных данных
 df_normalized = df_filled.copy()
 
-# применяем нормализацию
+# применяем нормализацию MinMax
 df_normalized[numeric_columns] = scaler.fit_transform(df_filled[numeric_columns])
 
 # показываем результаты нормализации
-print("Данные после нормализации:")
+print("Данные после MinMax нормализации:")
 display(df_normalized[numeric_columns].head())
-print("\nСтатистики после нормализации:")
+print("\nСтатистики после MinMax нормализации:")
 display(df_normalized[numeric_columns].describe())
 
 df_final = df_normalized.copy()
@@ -72,41 +69,21 @@ categorical_columns = df_final.select_dtypes(include=['object']).columns
 print(categorical_columns.tolist())
 print(f"Количество категориальных колонок: {len(categorical_columns)}")
 
-# для колонок с малым количеством уникальных значений (2-10) используем One-Hot Encoding
-# для колонок с большим количеством уникальных значений используем Label Encoding (чтобы избежать переобучения)
-
-low_cardinality_cols = []
-high_cardinality_cols = []
-
+print("Анализ категориальных колонок:")
 for col in categorical_columns:
     unique_count = df_final[col].nunique()
     print(f"Колонка '{col}': {unique_count} уникальных значений")
 
-    if unique_count <= 10:
-        low_cardinality_cols.append(col)
-    else:
-        high_cardinality_cols.append(col)
-
-print(f"\nКолонки для One-Hot Encoding: {low_cardinality_cols}")
-print(f"Колонки для Label Encoding: {high_cardinality_cols}")
-
-# применяем Label Encoding для колонок с большим количеством категорий
-from sklearn.preprocessing import LabelEncoder
-
-label_encoder = LabelEncoder()
-
-for col in high_cardinality_cols:
-    print(f"Применяем Label Encoding к: {col}")
-    df_final[col] = label_encoder.fit_transform(df_final[col].astype(str))
-
-# применяем One-Hot Encoding для колонок с малым количеством категорий
-if len(low_cardinality_cols) > 0:
-    print(f"Применяем One-Hot Encoding к: {low_cardinality_cols}")
-    df_final = pd.get_dummies(df_final, columns=low_cardinality_cols, drop_first=True)
+# Применяем One-Hot Encoding для категориальных колонок
+if len(categorical_columns) > 0:
+    print(f"\nПрименяем One-Hot Encoding ко всем категориальным колонкам: {categorical_columns.tolist()}")
+    df_final = pd.get_dummies(df_final, columns=categorical_columns, drop_first=True)
 
     print("Столбцы после One-Hot Encoding:")
-    new_columns = [col for col in df_final.columns if any(low_col in col for low_col in low_cardinality_cols)]
+    new_columns = [col for col in df_final.columns if any(cat_col in col for cat_col in categorical_columns)]
     print(new_columns)
+else:
+    print("Нет категориальных колонок для кодирования")
 
 df_final.to_csv("processed_titanic.csv", index=False)
 
