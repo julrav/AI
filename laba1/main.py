@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
+from IPython.display import display
 
 # загружаем данные
 df = pd.read_csv("datasets/test.csv")
@@ -23,7 +24,7 @@ missing_values = df.isnull().sum()
 print(missing_values[missing_values > 0])
 
 # сохраняем копию для сравнения, исключая колонки
-df_filled = df.drop(['Name', 'Cabin', 'PassengerId', 'Spa'], axis=1).copy()
+df_filled = df.drop(['Name', 'Cabin', 'PassengerId', 'Spa', 'Age', 'CryoSleep', 'VIP'], axis=1).copy()
 
 # заполняем числовые колонки медианой
 numeric_columns = df_filled.select_dtypes(include=[np.number]).columns
@@ -40,6 +41,11 @@ for col in categorical_columns:
 # проверяем, что пропущенных значений не осталось
 print("Пропущенные значения после заполнения:")
 print(df_filled.isnull().sum())
+
+print("\nПервые 5 строк после заполнения пропущенных значений:")
+display(df_filled.head())
+print("\nТипы данных после заполнения:")
+print(df_filled.dtypes.value_counts())
 
 # сравнение до и после
 print("\nСравнение до заполнения:")
