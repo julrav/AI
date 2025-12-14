@@ -60,7 +60,7 @@ median_happiness = df['happiness_score'].median()
 happiness_class_col = 'is_happy_city'
 df[happiness_class_col] = (df['happiness_score'] > median_happiness).astype(int)
 
-print(f"\n--- ПОДГОТОВКА ДЛЯ КЛАССИФИКАЦИИ ---")
+print(f"\nПОДГОТОВКА ДЛЯ КЛАССИФИКАЦИИ")
 print(f"Медианное значение happiness_score: {median_happiness:.2f}")
 print(f"Распределение классов:")
 print(df[happiness_class_col].value_counts())
@@ -85,7 +85,7 @@ logreg_model.fit(X_train_clf, y_train_clf)
 y_pred_test_clf = logreg_model.predict(X_test_clf)
 accuracy = accuracy_score(y_test_clf, y_pred_test_clf)
 
-print(f"\n--- РЕЗУЛЬТАТЫ КЛАССИФИКАЦИИ ---")
+print(f"\nРЕЗУЛЬТАТЫ КЛАССИФИКАЦИИ")
 print(f"Accuracy score: {accuracy:.4f}")
 
 # Матрица ошибок
