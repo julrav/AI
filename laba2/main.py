@@ -47,20 +47,17 @@ rmse = root_mean_squared_error(y_test, y_pred_test)
 mae = mean_absolute_error(y_test, y_pred_test)
 r2_test = r2_score(y_test, y_pred_test)
 
-print(f"\n--- РЕЗУЛЬТАТЫ РЕГРЕССИИ ---")
+print(f"\nРЕЗУЛЬТАТЫ РЕГРЕССИИ")
 print(f"Среднеквадратичная ошибка (MSE): {mse:.4f}")
 print(f"Корень среднеквадратичной ошибки (RMSE): {rmse:.4f}")
 print(f"Средняя абсолютная ошибка (MAE): {mae:.4f}")
 print(f"R2 score: {r2_test:.4f}")
 
-# Классификация: счастлив человек в городе или нет
-# Создаем бинарную целевую переменную на основе медианы happiness_score
+#классификация: счастлив человек в городе или нет. создаем бинарную целевую переменную на основе медианы happiness_score
 median_happiness = df['happiness_score'].median()
-# Используем другое имя для колонки, чтобы не было конфликта
 happiness_class_col = 'is_happy_city'
 df[happiness_class_col] = (df['happiness_score'] > median_happiness).astype(int)
 
-print(f"\nПОДГОТОВКА ДЛЯ КЛАССИФИКАЦИИ")
 print(f"Медианное значение happiness_score: {median_happiness:.2f}")
 print(f"Распределение классов:")
 print(df[happiness_class_col].value_counts())
@@ -68,9 +65,9 @@ print(f"0 - несчастлив (happiness_score ≤ {median_happiness:.2f})")
 print(f"1 - счастлив (happiness_score > {median_happiness:.2f})")
 
 # Удаляем все столбцы, связанные с городами и целевыми переменными
-cols_to_drop_clf = city_name_cols + [target_reg, happiness_class_col]
-X_clf = df.drop(columns=cols_to_drop_clf)
-y_clf = df[happiness_class_col]
+cols_to_drop_clf=city_name_cols+[target_reg, happiness_class_col]
+X_clf=df.drop(columns=cols_to_drop_clf)
+y_clf=df[happiness_class_col]
 
 print(f"\nПризнаки для классификации: {X_clf.shape}")
 print(f"Целевая переменная для классификации: {y_clf.shape}")
@@ -83,13 +80,13 @@ X_train_clf, X_test_clf, y_train_clf, y_test_clf = train_test_split(
 logreg_model = LogisticRegression(max_iter=1000)
 logreg_model.fit(X_train_clf, y_train_clf)
 y_pred_test_clf = logreg_model.predict(X_test_clf)
-accuracy = accuracy_score(y_test_clf, y_pred_test_clf)
+accuracy=accuracy_score(y_test_clf, y_pred_test_clf)
 
-print(f"\nРЕЗУЛЬТАТЫ КЛАССИФИКАЦИИ")
+print(f"РЕЗУЛЬТАТЫ КЛАССИФИКАЦИИ")
 print(f"Accuracy score: {accuracy:.4f}")
 
-# Матрица ошибок
-cm = confusion_matrix(y_test_clf, y_pred_test_clf)
+#матрица ошибок
+cm=confusion_matrix(y_test_clf, y_pred_test_clf)
 
 plt.figure(figsize=(8, 6))
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
@@ -100,13 +97,3 @@ plt.ylabel('True Label')
 plt.xlabel('Predicted Label')
 plt.tight_layout()
 plt.show()
-
-# Дополнительная информация
-print(f"\nДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ")
-print(f"Коэффициенты регрессии: {len(linear_model.coef_)}")
-print(f"Важные признаки для регрессии:")
-feature_importance = pd.DataFrame({
-    'feature': X.columns,
-    'coefficient': linear_model.coef_
-}).sort_values('coefficient', key=abs, ascending=False)
-print(feature_importance.head(10))
