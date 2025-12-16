@@ -28,7 +28,7 @@ y_pred_proba_ab=ab.predict_proba(X_test)
 
 print("Accuracy (AdaBoost):", accuracy_score(y_test, y_pred_ab))
 
-gb = GradientBoostingClassifier(n_estimators=200, max_depth=3, learning_rate=0.1, random_state=42)
+gb=GradientBoostingClassifier(n_estimators=200, max_depth=3, learning_rate=0.1, random_state=42)
 gb.fit(X_train, y_train)
 
 y_pred_gb=gb.predict(X_test)
